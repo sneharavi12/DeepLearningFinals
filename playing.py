@@ -2,9 +2,9 @@
 Once a model is learned, use this to play it.
 """
 
-from flat_game import carmunk
+import game
 import numpy as np
-from nn import neural_net
+from neuralnet import neural_net
 
 NUM_SENSORS = 3
 
@@ -12,7 +12,7 @@ NUM_SENSORS = 3
 def play(model):
 
     car_distance = 0
-    game_state = carmunk.GameState()
+    game_state = game.GameState()
 
     # Do nothing to get initial.
     _, state = game_state.frame_step((2))

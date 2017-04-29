@@ -1,15 +1,14 @@
-from flat_game import carmunk
+import game
 import numpy as np
 import random
 import csv
-from nn import neural_net, LossHistory
+from neuralnet import neural_net, LossHistory
 import os.path
 import timeit
 
 NUM_INPUT = 3
-GAMMA = 0.9  # Forgetting.
-TUNING = False  # If False, just use arbitrary, pre-selected params.
-
+GAMMA = 0.9  
+TUNING = False  
 
 def train_net(model, params):
 
@@ -21,7 +20,6 @@ def train_net(model, params):
     batchSize = params['batchSize']
     buffer = params['buffer']
 
-    # Just stuff used below.
     max_car_distance = 0
     car_distance = 0
     t = 0
@@ -31,12 +29,11 @@ def train_net(model, params):
     loss_log = []
 
     # Create a new game instance.
-    game_state = carmunk.GameState()
+    game_state = game.GameState()
 
     # Get initial state by doing nothing and getting the state.
     _, state = game_state.frame_step((2))
 
-    # Let's time it.
     start_time = timeit.default_timer()
 
     # Run the frames.
@@ -53,10 +50,9 @@ def train_net(model, params):
             qval = model.predict(state, batch_size=1)
             action = (np.argmax(qval))  # best
 
-        # Take action, observe new state and get our treat.
+        # Take action, observe new state and get reward.
         reward, new_state = game_state.frame_step(action)
 
-        # Experience replay storage.
         replay.append((state, action, reward, new_state))
 
         # If we're done observing, start training.
@@ -66,7 +62,6 @@ def train_net(model, params):
             if len(replay) > buffer:
                 replay.pop(0)
 
-            # Randomly sample our experience replay memory
             minibatch = random.sample(replay, batchSize)
 
             # Get training values.
@@ -120,7 +115,6 @@ def train_net(model, params):
 
 
 def log_results(filename, data_collect, loss_log):
-    # Save the results to a file so we can graph it later.
     with open('results/sonar-frames/learn_data-' + filename + '.csv', 'w') as data_dump:
         wr = csv.writer(data_dump)
         wr.writerows(data_collect)
@@ -132,11 +126,10 @@ def log_results(filename, data_collect, loss_log):
 
 
 def process_minibatch(minibatch, model):
-    """This does the heavy lifting, aka, the training. It's super jacked."""
+    
     X_train = []
     y_train = []
-    # Loop through our batch and create arrays for X and y
-    # so that we can fit our model at every step.
+    
     for memory in minibatch:
         # Get stored values.
         old_state_m, action_m, reward_m, new_state_m = memory
@@ -172,7 +165,7 @@ def params_to_filename(params):
 def launch_learn(params):
     filename = params_to_filename(params)
     print("Trying %s" % filename)
-    # Make sure we haven't run this one.
+    
     if not os.path.isfile('results/sonar-frames/loss_data-' + filename + '.csv'):
         # Create file so we don't double test when we run multiple
         # instances of the script at the same time.
@@ -197,7 +190,7 @@ if __name__ == "__main__":
             for batchSize in batchSizes:
                 for buffer in buffers:
                     params = {
-                        "batchSize": batchSize,m
+                        "batchSize": batchSize,
                         "buffer": buffer,
                         "nn": nn_param
                     }

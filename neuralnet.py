@@ -9,11 +9,6 @@ from keras.optimizers import RMSprop
 from keras.layers.recurrent import LSTM
 from keras.callbacks import Callback
 
-# Adding this per a suggestion by Tim Kelch.
-# https://medium.com/@trkelch/this-post-is-great-possibly-the-best-tutorial-explanation-ive-found-thus-far-cf78886b5378#.w473ywtbw
-#import tensorflow as tf
-#tf.python.control_flow_ops = tf
-
 
 class LossHistory(Callback):
     def on_train_begin(self, logs={}):
@@ -47,20 +42,5 @@ def neural_net(num_sensors, params, load=''):
 
     if load:
         model.load_weights(load)
-
-    return model
-
-
-# def lstm_net(num_sensors, load=False):
-#     model = Sequential()
-#     model.add(LSTM(
-#         output_dim=512, input_dim=num_sensors, return_sequences=True
-#     ))
-#     model.add(Dropout(0.2))
-#     model.add(LSTM(output_dim=512, input_dim=512, return_sequences=False))
-#     model.add(Dropout(0.2))
-#     model.add(Dense(output_dim=3, input_dim=512))
-#     model.add(Activation("linear"))
-#     model.compile(loss="mean_squared_error", optimizer="rmsprop")
 
     return model
