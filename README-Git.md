@@ -1,104 +1,65 @@
-# Using reinforcement learning to train an autonomous vehicle to avoid obstacles
 
-**NOTE: If you're coming here from parts 1 or 2 of the Medium posts, you want to visit the releases section and check out version 1.0.0, as the code has evolved passed that.**
+# DeepLearningFinals
 
-This is a hobby project I created to learn the basics of reinforcement learning. It uses Python3, Pygame, Pymunk, Keras and Theanos. It employes a Q-learning (unsupervised) algorithm to learn how to move an object around a screen (drive itself) without running into obstacles.
+# Train an autonomous vehicle to avoid obstacles
 
-The purpose of this project is to eventually use the learnings from the game to operate a real-life remote-control car, using distance sensors. I am carrying on that project in another GitHub repo here: https://github.com/harvitronix/rl-rc-car
 
-This version of the code attempts to simulate the use of sensors to get us a step closer to being able to use this in the real world.
+Necessary dependencies should be installed through the docker file.
+#execute this to pull the required files
 
-Full writeups that pertain to version 1.0.0 can be found here:
+sudo docker pull sneharavi12/deeplearning:latest1
 
-*Part 1:* https://medium.com/@harvitronix/using-reinforcement-learning-in-python-to-teach-a-virtual-car-to-avoid-obstacles-6e782cc7d4c6
-
-*Part 2:* https://medium.com/@harvitronix/reinforcement-learning-in-python-to-teach-a-virtual-car-to-avoid-obstacles-part-2-93e614fcd238#.vbakopk4o
-
-*Part 3 (for this version of the code):*
-https://medium.com/@harvitronix/reinforcement-learning-in-python-to-teach-an-rc-car-to-avoid-obstacles-part-3-a1d063ac962f
-
-## Installing
-
-These instructions are for a fresh Ubuntu 16.04 box. Most of the same should apply to OS X. If you have issues installing, feel free to open an issue with your error and I'll do my best to help.
-
-### Basics
-
-Recent Ubuntu releases come with python3 installed. I use pip3 for installing dependencies so install that with `sudo apt install python3-pip`. Install git if you don't already have it with `sudo apt install git`.
-
-Then clone this repo with `git clone https://github.com/harvitronix/reinforcement-learning-car.git`. It has some pretty big weights files saved in past commits, so to just get the latest the fastest, do `git clone https://github.com/harvitronix/reinforcement-learning-car.git --depth 1`.
-
-### Python dependencies
-
-`pip3 install numpy keras h5py`
-
-That should install a slew of other libraries you need as well.
-
-### Install Pygame
-
-Install Pygame's dependencies with:
-
-`sudo apt install mercurial libfreetype6-dev libsdl-dev libsdl-image1.2-dev libsdl-ttf2.0-dev libsmpeg-dev libportmidi-dev libavformat-dev libsdl-mixer1.2-dev libswscale-dev libjpeg-dev`
-
-Then install Pygame itself:
-
-`pip3 install hg+http://bitbucket.org/pygame/pygame`
-
-### Install Pymunk
-
-This is the physics engine used by the simulation. It just went through a pretty significant rewrite (v5) so you need to grab the older v4 version. v4 is written for Python 2 so there are a couple extra steps.
-
-Go back to your home or downloads and get Pymunk 4:
-
-`wget https://github.com/viblo/pymunk/archive/pymunk-4.0.0.tar.gz`
-
-Unpack it:
-
-`tar zxvf pymunk-4.0.0.tar.gz`
+Pymunk version 4 for python2 is installed. Perform the following to convert it to Python3
 
 Update from Python 2 to 3:
 
-`cd pymunk-pymukn-4.0.0/pymunk`
+cd pymunk-pymukn-4.0.0/pymunk
 
-`2to3 -w *.py`
+2to3 -w *.py
 
 Install it:
 
-`cd ..`
-`python3 setup.py install`
+cd .. 
+python3 setup.py install
 
-Now go back to where you cloned `reinforcement-learning-car` and make sure everything worked with a quick `python3 learning.py`. If you see a screen come up with a little dot flying around the screen, you're ready to go!
+Running the Game:
 
-## Training
+Train the model in the first step.
 
-First, you need to train a model. This will save weights to the `saved-models` folder. *You may need to create this folder before running*. You can train the model by running:
+python3 learning.py
 
-`python3 learning.py`
+Run the trained model in the next step.
 
-It can take anywhere from an hour to 36 hours to train a model, depending on the complexity of the network and the size of your sample. However, it will spit out weights every 25,000 frames, so you can move on to the next step in much less time.
+python3 playing.py
 
-## Playing
+The car drives around through obstacles and restarts on bumping into any.
 
-Edit the `nn.py` file to change the path name for the model you want to load. Sorry about this, I know it should be a command line argument.
+## Building Gym Torcs
 
-Then, watch the car drive itself around the obstacles!
+##Why torcs?
+TORCS, The Open Racing Car Simulator is a highly portable multi platform car racing simulation. 
+It is used as ordinary car racing game, as AI racing game and as research platform. It runs on Linux (x86, AMD64 and PPC), FreeBSD, OpenSolaris, MacOSX and Windows.
 
-`python3 playing.py`
+You can visualize how the neural network learns over time and inspect its learning process, rather than just looking at the final result
+TORCS can help us simulate and understand machine learning technique in automated driving, which is important for self-driving car technologies
 
-That's all there is to it.
+There are three steps  to have this agent running.
+-Server for Torcs
+-lient for Torcs
+-An environment, built like Gym environments that gives the observations and rewards based on the agent st.
 
-## Plotting
+#Server
+v-Torcs
+This is an all in one package of TORCS. 
+The link below gives a complete overview of how this can be installed and set up on a linux machine.
+https://github.com/giuse/vtorcs
+This captures various sensor information that can be used to train the agent once we build the environment
 
-Once you have a bunch of CSV files created via the learning, you can convert those into graphs by running:
+#Client
+SnakeOil is a Python library for interfacing with a TORCS race car simulator
+Its as simle as creating the client as shown and implementing the custom 
+drive function	
+Involves mechanics of driving the car & not its implementation
 
-`python3 plotting.py`
 
-This will also spit out a bunch of loss and distance averages at the different parameters.
 
-## Credits
-
-I'm grateful to the following people and the work they did that helped me learn how to do this:
-
-- Playing Atari with Deep Reinforcement Learning - http://arxiv.org/pdf/1312.5602.pdf
-- Deep learning to play Atari games: https://github.com/spragunr/deep_q_rl
-- Another deep learning project for video games: https://github.com/asrivat1/DeepLearningVideoGames
-- A great tutorial on reinforcement learning that a lot of my project is based on: http://outlace.com/Reinforcement-Learning-Part-3/
